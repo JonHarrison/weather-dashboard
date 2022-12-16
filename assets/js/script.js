@@ -53,7 +53,7 @@ $(document).ready(function () {
                     ]),
                     $('<p>', { 'class': 'h4', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)}` }),
                     $('<p>', { 'class': 'h4', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
-                    $('<p>', { 'class': 'h4', 'text': `Wind: ${windSpeedToDisplay(ws)}` }).append([$('<i>', { 'class': `wi wi-wind to-${wd}-deg` })]),
+                    $('<p>', { 'class': 'h4', 'text': `Wind: ${windSpeedToDisplay(ws)}` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
                     $('<p>', { 'class': 'h4', 'text': `Humidity: ${hum}%` })
                 ])
             ])
