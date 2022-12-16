@@ -1,0 +1,17 @@
+.weather-header {
+    /* Adele's first love gradient */
+    background-color: #2a2a72;
+    background-image: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%);
+}
+
+.weather-hr {
+    
+}
+
+.search-button {
+    /* border-radius: 25px;
+    border-style:dashed; */
+    /* color: white; */
+    /* background-color: blue; */
+    /* padding: 20px; */
+}
