@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(function () {
     // Constants
     const formHeadingEl = $('#form-heading');
@@ -60,9 +62,25 @@ $(document).ready(function () {
         ]);
     }
 
-    function getWeather(cityName) {
-
+    async function getCoordinatesFromLocation(cityName) {
         let queryURL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=${APIKey}`;
+        const response = await fetch(queryURL)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                 }
+                return response.json();
+            })
+            .then(function (data) {
+                return { lat: data[0].lat, lon: data[0].lon };
+            })
+            .catch(function (error) {
+                console(error);
+            })
+        return response;
+    }
+
+    function getWeather(cityName) {
 
         switch (method) {
             case methods.async:
@@ -73,16 +91,12 @@ $(document).ready(function () {
                 }
                 break;
             case methods.fetch:
-                fetch(queryURL)
-                    .then(function (response) {
-                        if (response.ok) { return response.json(); } // convert data to JSON
-                        throw new Error('fetch(' + queryURL + ') failed');
-                    })
-                    .then(function (response) {
-                        let lat = response[0].lat;
-                        let lon = response[0].lon;
+                (async() => {
+                    let coords = await getCoordinatesFromLocation(cityName);
+                    console.log(coords);
+                    if (coords) {
                         // current weather API
-                        let queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
+                        let queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${APIKey}&units=${apiUnit}`;
                         fetch(queryURL)
                             .then(function (response) {
                                 if (response.ok) { return response.json(); } // convert data to JSON
@@ -96,12 +110,10 @@ $(document).ready(function () {
                                 alert("name:" + error.name + " message:" + error.message);
                                 // catch any errors
                             });
-                    })
-                    .catch(function (error) {
-                        alert("name:" + error.name + " message:" + error.message);
-                        // catch any errors
-                    });
+                    }
+                })()
                 break;
+
         }
     }
 
