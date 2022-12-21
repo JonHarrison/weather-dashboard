@@ -85,6 +85,25 @@ $(document).ready(function () {
     }
 
     function getWeather(cityName) {
+    function renderHistoryButton(geocode, index) {
+        var btnEl = $('<button>', {
+            class: 'list-group-item',
+            id: `btn${index}`,
+            text: `${geocode.name} (${geocode.country})` , // use city and country for uniqueness
+            // 'data-location': entry.location,
+            'data-geocode': JSON.stringify(geocode)
+        });
+        historyEl.append(btnEl);
+    }
+
+    function displayHistory() {
+        // searchHistory = JSON.parse(localStorage.getItem(LSKey));
+        historyEl.empty();
+        searchHistory.forEach(function (entry, index) {
+            renderHistoryButton(entry, index);
+        })
+    }
+    displayHistory();
 
         switch (method) {
             case methods.async:
