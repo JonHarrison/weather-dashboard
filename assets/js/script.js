@@ -86,6 +86,30 @@ $(document).ready(function () {
     }
 
     function getWeather(cityName) {
+    searchButtonEl.on('click', function (event) {
+        event.preventDefault();
+        let location = searchInputEl.val().trim();
+        getGeocodeFromLocation(location)
+            .then(function (geocode) {
+                // let entry = { name, state, country, coords }
+                if (!searchHistory.find(geocode => (geocode.name === location))) { // only add if it isn't already in the history (match location)
+                    searchHistory.push(geocode);
+                    localStorage.setItem(LSKey, JSON.stringify(searchHistory));
+                    // displayHistory();
+                    renderHistoryButton(geocode, searchHistory.length);
+                }
+                // getWeather(location);
+                displayWeatherForGeocode(geocode);
+            });
+        // (async() => {
+        //     let coords = await getCoordinatesFromLocation(cityName);
+        //     let obj = { cityName , coords }
+        //     searchHistory.push(obj);
+        //     localStorage.setItem("WeatherDashBoard.History",JSON.stringify(searchHistory));
+        //     displayHistory();
+        //     getWeather(cityName);
+        // });
+    })
 
     historyEl.on('click', '.list-group-item', function (event) {
         event.preventDefault();
