@@ -85,6 +85,15 @@ $(document).ready(function () {
     }
 
     function getWeather(cityName) {
+
+    historyEl.on('click', '.list-group-item', function (event) {
+        event.preventDefault();
+        let entry = event.target;
+        // let location = entry.getAttribute('data-location');
+        // getWeather(location);
+        let geocode = JSON.parse(entry.getAttribute('data-geocode'));
+        displayWeatherForGeocode(geocode);
+    })
     function renderHistoryButton(geocode, index) {
         var btnEl = $('<button>', {
             class: 'list-group-item',
