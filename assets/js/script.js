@@ -67,25 +67,61 @@ $(document).ready(function () {
         ]);
     }
 
-    async function getCoordinatesFromLocation(cityName) {
-        let queryURL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&appid=${APIKey}`;
-        const response = await fetch(queryURL)
-            .then(function (response) {
+    async function getGeocodeFromLocation(location) {
+        // Geocoding API gets geographical location (name,state,country) and coordinates (lat, lon) from location
+        let queryURL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${APIKey}`;
+        let response = await fetch(queryURL)
+            .then(function status(response) {
                 if (!response.ok) {
-                    throw Error(response.statusText);
-                 }
-                return response.json();
+                    return Promise.reject(new Error(response.statusText));
+                }
+                return Promise.resolve(response);
+            })
+            .then(function json(response) {
+                return Promise.resolve(response.json());
             })
             .then(function (data) {
-                return { lat: data[0].lat, lon: data[0].lon };
+                console.log(data);
+                return { name: data[0].name, state: data[0].state, country:data[0].country, lat: data[0].lat, lon: data[0].lon };
             })
             .catch(function (error) {
                 console(error);
-            })
+            });
+        console.log(response);
         return response;
     }
 
-    function getWeather(cityName) {
+    async function getCurrentWeatherForCoords(lat,lon) {
+        // current weather API
+        let queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
+        const response = await fetch(queryURL)
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json(); // convert data to JSON
+                }
+                throw new Error('fetch(' + queryURL + ') failed');
+            })
+            .then(function (data) {
+                console.log(data);
+                return (data);
+            })
+            .catch(function (error) {
+                alert("name:" + error.name + " message:" + error.message);
+                // catch any errors
+            });
+        console.log(response);
+        return response;
+    }
+
+    function displayWeatherForGeocode(geocode)
+    {
+        getCurrentWeatherForCoords(geocode.lat,geocode.lon)
+        .then(function (weather) {
+            let loc = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
+            renderCurrentWeather(loc,weather);
+        });
+    }
+
     searchButtonEl.on('click', function (event) {
         event.preventDefault();
         let location = searchInputEl.val().trim();
@@ -119,6 +155,7 @@ $(document).ready(function () {
         let geocode = JSON.parse(entry.getAttribute('data-geocode'));
         displayWeatherForGeocode(geocode);
     })
+
     function renderHistoryButton(geocode, index) {
         var btnEl = $('<button>', {
             class: 'list-group-item',
@@ -139,41 +176,34 @@ $(document).ready(function () {
     }
     displayHistory();
 
+    function getWeather(location) {
+
         switch (method) {
             case methods.async:
-                const userAction = async () => {
+                let userAction = async () => {
                     const response = await fetch(queryURL);
                     const myJson = await response.json(); // extract JSON from the html response
                     console.log(myJson);
                 }
                 break;
             case methods.fetch:
-                (async() => {
-                    let coords = await getCoordinatesFromLocation(cityName);
-                    console.log(coords);
-                    if (coords) {
-                        // current weather API
-                        let queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${APIKey}&units=${apiUnit}`;
-                        fetch(queryURL)
-                            .then(function (response) {
-                                if (response.ok) { return response.json(); } // convert data to JSON
-                                throw new Error('fetch(' + queryURL + ') failed');
-                            })
-                            .then(function (response) {
-                                console.log(response);
-                                displayCurrentWeather(response);
-                            })
-                            .catch(function (error) {
-                                alert("name:" + error.name + " message:" + error.message);
-                                // catch any errors
-                            });
-                    }
-                })()
+                getGeocodeFromLocation(location)
+                    .then(function (geocode) {
+                        console.log(geocode);
+                        displayWeatherForGeocode(geocode);
+                    });
+                // const weatherAction = async() => {
+                //     let coords = await getCoordinatesFromLocation(cityName);
+                //     console.log(coords);
+                //     if (coords) {
+                //         let response = await getCurrentWeather(coords);
+                //         displayCurrentWeather(response);
+                //     }
+                // }
                 break;
 
         }
     }
-
     getWeather('London');
 
 });
