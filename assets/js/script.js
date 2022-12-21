@@ -47,13 +47,14 @@ $(document).ready(function () {
         }
     }
 
-    function displayCurrentWeather(data) {
-        console.log(data);
-        const { name, main: { temp, temp_min: tmin, temp_max: tmax, humidity: hum }, wind: { deg: wd, speed: ws }, ...rest } = data;
+    function renderCurrentWeather(location, data) {
+        console.log(location, data);
+        const { main, main: { temp, temp_min: tmin, temp_max: tmax, humidity: hum }, wind: { deg: wd, speed: ws }, ...rest } = data;
+        todayEl.empty();
         todayEl.append([
             $('<div>', { class: 'row mr-0' }).append([
                 $('<div>', { class: 'col-12 border border-dark m-3 rounded' }).append([
-                    $('<h3>', { 'class': 'h3 display-4', 'text': `${name} (${moment().format('DD/MM/YYYY')})` }).append([
+                    $('<h3>', { 'class': 'h3 display-5', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
                         $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
                         $('<img>', { 'src': `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
                     ]),
