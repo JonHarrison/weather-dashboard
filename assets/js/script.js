@@ -10,13 +10,17 @@ $(document).ready(function () {
     const todayEl = $('#today');
     const forecastEl = $('#forecast');
 
-    const APIKey = "8143ac5be27f4f44b6e5d03ce390686b"; // my personal KEY
+    const LSKey = 'WeatherDashboard.History';
+
+    const APIKey = '8143ac5be27f4f44b6e5d03ce390686b'; // my personal KEY
 
     const methods = { fetch: 1, async: 2 };
     const method = methods.fetch;
 
     const units = { default: "standard", metric: "metric", imperial: "imperial" };
     const apiUnit = units.default; // returns temperature in Kelvin, wind speed in m/s
+
+    var searchHistory = JSON.parse(localStorage.getItem(LSKey)) ?? []; // null coalescing operator gives initial empty array
 
     // convert API units to MPH
     function windSpeedToDisplay(speed) {
