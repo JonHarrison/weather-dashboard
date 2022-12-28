@@ -14,9 +14,6 @@ $(document).ready(function () {
     const APIKey = '8143ac5be27f4f44b6e5d03ce390686b'; // my personal KEY
     const FIVE_DAY_FORECAST_SELECTED_HOUR = 12; // select weather at midday for 5-day forecast
 
-    const methods = { fetch: 1, async: 2 };
-    const method = methods.fetch;
-
     const units = { default: "standard", metric: "metric", imperial: "imperial" };
     const apiUnit = units.default; // returns temperature in Kelvin, wind speed in m/s
 
@@ -57,9 +54,9 @@ $(document).ready(function () {
                     $('<div>', { class: 'card rounded border border-secondary' }).append([ // border border-dark
                         $('<div>', { class: 'card-body' }).append([
                             $('<p>', { 'class': 'card-title h2 font-weight-bold', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
-                        $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
+                                $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
                                 // $('<img>', { 'src': `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
-                    ]),
+                            ]),
                             $('<p>', { 'class': 'card-text h5', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)})` }),
                             // $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
                             $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
@@ -79,10 +76,10 @@ $(document).ready(function () {
                 $('<h4>', { 'class': 'font-weight-bold', 'text': '5-Day Forecast:' })
             )
         );
-        
+
         // var fiveDayEl = $('<div class="row container-fluid">'); // d-flex flex-row justify-content-around 
         // forecastEl.append('<div class="row row-cols-5">'); // <div class="container-fluid"> row-cols-xs-1 row-cols-lg-6 d-flex flex-row justify-content-around
-        data.list.forEach(function(entry,index) {
+        data.list.forEach(function (entry, index) {
             var timestamp = moment.unix(entry.dt).format('DD/MM/YYYY HH:MM:SS');
             //console.log(`timestamp : ${timestamp}`);
             if (moment.unix(entry.dt).hours() === FIVE_DAY_FORECAST_SELECTED_HOUR) {
@@ -123,7 +120,7 @@ $(document).ready(function () {
             })
             .then(function (data) {
                 console.log(data);
-                return { name: data[0].name, state: data[0].state, country:data[0].country, lat: data[0].lat, lon: data[0].lon };
+                return { name: data[0].name, state: data[0].state, country: data[0].country, lat: data[0].lat, lon: data[0].lon };
             })
             .catch(function (error) {
                 console(error);
@@ -132,7 +129,7 @@ $(document).ready(function () {
         return response;
     }
 
-    async function getCurrentWeatherForCoords(lat,lon) {
+    async function getCurrentWeatherForCoords(lat, lon) {
         // current weather API
         let queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
         const response = await fetch(queryURL)
@@ -154,7 +151,7 @@ $(document).ready(function () {
         return response;
     }
 
-    async function getFiveDayThreeHourForecastForCoords(lat,lon) {
+    async function getFiveDayThreeHourForecastForCoords(lat, lon) {
         // current weather API
         let queryURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
         const response = await fetch(queryURL)
@@ -176,17 +173,16 @@ $(document).ready(function () {
         return response;
     }
 
-    function displayWeatherForGeocode(geocode)
-    {
-        getCurrentWeatherForCoords(geocode.lat,geocode.lon)
-        .then(function (weather) {
-            let loc = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
-            renderCurrentWeather(loc,weather);
-        });
+    function displayWeatherForGeocode(geocode) {
+        getCurrentWeatherForCoords(geocode.lat, geocode.lon)
+            .then(function (weather) {
+                let loc = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
+                renderCurrentWeather(loc, weather);
+            });
         getFiveDayThreeHourForecastForCoords(geocode.lat, geocode.lon)
-        .then(function (weather) {
-            renderFiveDayWeather(weather);
-        });
+            .then(function (weather) {
+                renderFiveDayWeather(weather);
+            });
     }
 
     searchButtonEl.on('click', function (event) {
@@ -204,14 +200,6 @@ $(document).ready(function () {
                 // getWeather(location);
                 displayWeatherForGeocode(geocode);
             });
-        // (async() => {
-        //     let coords = await getCoordinatesFromLocation(cityName);
-        //     let obj = { cityName , coords }
-        //     searchHistory.push(obj);
-        //     localStorage.setItem("WeatherDashBoard.History",JSON.stringify(searchHistory));
-        //     displayHistory();
-        //     getWeather(cityName);
-        // });
     })
 
     historyEl.on('click', '.list-group-item', function (event) {
@@ -227,7 +215,7 @@ $(document).ready(function () {
         var btnEl = $('<button>', {
             class: 'list-group-item',
             id: `btn${index}`,
-            text: `${geocode.name} (${geocode.country})` , // use city and country for uniqueness
+            text: `${geocode.name} (${geocode.country})`, // use city and country for uniqueness
             // 'data-location': entry.location,
             'data-geocode': JSON.stringify(geocode)
         });
@@ -241,36 +229,15 @@ $(document).ready(function () {
             renderHistoryButton(entry, index);
         })
     }
-    displayHistory();
 
     function getWeather(location) {
-
-        switch (method) {
-            case methods.async:
-                let userAction = async () => {
-                    const response = await fetch(queryURL);
-                    const myJson = await response.json(); // extract JSON from the html response
-                    console.log(myJson);
-                }
-                break;
-            case methods.fetch:
-                getGeocodeFromLocation(location)
-                    .then(function (geocode) {
-                        console.log(geocode);
-                        displayWeatherForGeocode(geocode);
-                    });
-                // const weatherAction = async() => {
-                //     let coords = await getCoordinatesFromLocation(cityName);
-                //     console.log(coords);
-                //     if (coords) {
-                //         let response = await getCurrentWeather(coords);
-                //         displayCurrentWeather(response);
-                //     }
-                // }
-                break;
-
-        }
+        getGeocodeFromLocation(location)
+            .then(function (geocode) {
+                console.log(geocode);
+                displayWeatherForGeocode(geocode);
+            });
     }
-    getWeather('London');
+
+    displayHistory();
 
 });
