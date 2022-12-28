@@ -5,7 +5,10 @@
 }
 
 .weather-hr {
-    
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid rgba(154,154,154);
 }
 
 .search-button {
