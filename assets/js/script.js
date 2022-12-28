@@ -10,8 +10,7 @@ $(document).ready(function () {
     const todayEl = $('#today');
     const forecastEl = $('#forecast');
 
-    const LSKey = 'WeatherDashboard.History';
-
+    const LSKey = 'WeatherDashboard.History'; // localStorage KEY
     const APIKey = '8143ac5be27f4f44b6e5d03ce390686b'; // my personal KEY
 
     const methods = { fetch: 1, async: 2 };
