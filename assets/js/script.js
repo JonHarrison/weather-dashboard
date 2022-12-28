@@ -164,7 +164,7 @@ $(document).ready(function () {
             // 'data-location': entry.location,
             'data-geocode': JSON.stringify(geocode)
         });
-        historyEl.append(btnEl);
+        historyEl.prepend(btnEl);
     }
 
     function displayHistory() {
