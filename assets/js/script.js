@@ -199,12 +199,17 @@ $(document).ready(function () {
         let location = searchInputEl.val().trim();
         getGeocodeFromLocation(location)
             .then(function (geocode) {
-                if (!searchHistory.find(geocode => (geocode.name === location))) { // only add if it isn't already in the history (match location)
-                    searchHistory.push(geocode);
-                    localStorage.setItem(LSKey, JSON.stringify(searchHistory));
-                    renderHistoryButton(geocode, searchHistory.length);
+                if (typeof geocode === 'undefined') { // handle state that location wasn't found
+                    log(`location ${location} not found`);
                 }
-                displayWeatherForGeocode(geocode);
+                else {
+                    if (!searchHistory.find(geocode => (geocode.name === location))) { // only add if it isn't already in the history (match location)
+                        searchHistory.push(geocode);
+                        localStorage.setItem(LSKey, JSON.stringify(searchHistory));
+                        renderHistoryButton(geocode, searchHistory.length);
+                    }
+                    displayWeatherForGeocode(geocode);
+                }
             });
     })
 
