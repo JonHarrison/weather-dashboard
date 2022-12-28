@@ -52,16 +52,20 @@ $(document).ready(function () {
         const { main, main: { temp, temp_min: tmin, temp_max: tmax, humidity: hum }, wind: { deg: wd, speed: ws }, ...rest } = data;
         todayEl.empty();
         todayEl.append([
-            $('<div>', { class: 'row mr-0' }).append([
-                $('<div>', { class: 'col-12 border border-dark m-3 rounded' }).append([
-                    $('<h3>', { 'class': 'h3 display-5', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
+            $('<div>', { class: 'row' }).append([
+                $('<div>', { class: 'col' }).append([
+                    $('<div>', { class: 'card rounded border border-secondary' }).append([ // border border-dark
+                        $('<div>', { class: 'card-body' }).append([
+                            $('<p>', { 'class': 'card-title h2 font-weight-bold', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
                         $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
-                        $('<img>', { 'src': `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
+                                // $('<img>', { 'src': `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
                     ]),
-                    $('<p>', { 'class': 'h4', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)})` }),
-                    $('<p>', { 'class': 'h4', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
-                    $('<p>', { 'class': 'h4', 'text': `Wind: ${windSpeedToDisplay(ws)}` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
-                    $('<p>', { 'class': 'h4', 'text': `Humidity: ${hum}%` })
+                            $('<p>', { 'class': 'card-text h5', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)})` }),
+                            // $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
+                            $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
+                            $('<p>', { 'class': 'card-text h5', 'text': `Humidity: ${hum}%` })
+                        ])
+                    ])
                 ])
             ])
         ]);
