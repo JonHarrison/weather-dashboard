@@ -116,6 +116,28 @@ $(document).ready(function () {
         return response;
     }
 
+    async function getFiveDayThreeHourForecastForCoords(lat,lon) {
+        // current weather API
+        let queryURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
+        const response = await fetch(queryURL)
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json(); // convert data to JSON
+                }
+                throw new Error('fetch(' + queryURL + ') failed');
+            })
+            .then(function (data) {
+                console.log(data);
+                return (data);
+            })
+            .catch(function (error) {
+                alert("name:" + error.name + " message:" + error.message);
+                // catch any errors
+            });
+        console.log(response);
+        return response;
+    }
+
     function displayWeatherForGeocode(geocode)
     {
         getCurrentWeatherForCoords(geocode.lat,geocode.lon)
