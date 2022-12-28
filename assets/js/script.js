@@ -1,7 +1,8 @@
 "use strict";
 
 $(document).ready(function () {
-    // Constants
+
+    // constants
     const formHeadingEl = $('#form-heading');
     const searchFormEl = $('#search-form');
     const searchInputEl = $('#search-input');
@@ -17,6 +18,11 @@ $(document).ready(function () {
     const units = { default: "standard", metric: "metric", imperial: "imperial" };
     const apiUnit = units.default; // returns temperature in Kelvin, wind speed in m/s
 
+    // logging
+    const log_level = 1;
+    var log = function() { if (log_level > 0) { console.log.apply(this,arguments); }}
+    
+    // variables
     var searchHistory = JSON.parse(localStorage.getItem(LSKey)) ?? []; // null coalescing operator gives initial empty array
 
     // convert API units to MPH
@@ -27,7 +33,7 @@ $(document).ready(function () {
                 return (speed * ratioMsToMph).toFixed(1) + ' MPH';
                 break;
             default:
-                // not implemented
+                // any other units, not currently implemented
                 break;
         }
     }
@@ -39,19 +45,20 @@ $(document).ready(function () {
                 // 0 Kelvin = -273.15 Celsius
                 return (temp - 273.15).toFixed(2) + ' \xB0' + 'C' // 0xB0 is degree symbol
             default:
-                // not implemented
+                // any other units, not currently implemented
                 break;
         }
     }
 
+    // render current weather card
     function renderCurrentWeather(location, data) {
-        console.log(location, data);
+        log('renderCurrentWeather:', location, data);
         const { main, main: { temp, temp_min: tmin, temp_max: tmax, humidity: hum }, wind: { deg: wd, speed: ws }, ...rest } = data;
         todayEl.empty();
         todayEl.append([
             $('<div>', { class: 'row' }).append([
                 $('<div>', { class: 'col' }).append([
-                    $('<div>', { class: 'card rounded border border-secondary' }).append([ // border border-dark
+                    $('<div>', { class: 'card rounded border border-secondary' }).append([
                         $('<div>', { class: 'card-body' }).append([
                             $('<p>', { 'class': 'card-title h2 font-weight-bold', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
                                 $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
@@ -68,26 +75,24 @@ $(document).ready(function () {
         ]);
     }
 
+    // render five day weather cards
     function renderFiveDayWeather(data) {
-        console.log(data);
+        log('renderFiveDayWeather:', data);
         forecastEl.empty();
         forecastEl.append(
             $('<div>', { 'class': 'col-12 pt-3' }).append(
                 $('<h4>', { 'class': 'font-weight-bold', 'text': '5-Day Forecast:' })
             )
         );
-
-        // var fiveDayEl = $('<div class="row container-fluid">'); // d-flex flex-row justify-content-around 
-        // forecastEl.append('<div class="row row-cols-5">'); // <div class="container-fluid"> row-cols-xs-1 row-cols-lg-6 d-flex flex-row justify-content-around
         data.list.forEach(function (entry, index) {
             var timestamp = moment.unix(entry.dt).format('DD/MM/YYYY HH:MM:SS');
-            //console.log(`timestamp : ${timestamp}`);
+            //log(`timestamp : ${timestamp}`);
             if (moment.unix(entry.dt).hours() === FIVE_DAY_FORECAST_SELECTED_HOUR) {
-                console.log(`using entry ${index}`);
+                log(`using entry ${index}`, entry);
                 const { main, main: { temp, humidity: hum }, wind: { deg: wd, speed: ws }, ...rest } = entry;
                 forecastEl.append(
                     $('<div>', { class: 'col' }).append(
-                        $('<div>', { class: 'card forecast' }).append( // border border-dark
+                        $('<div>', { class: 'card forecast' }).append(
                             $('<div>', { class: 'card-body' }).append([
                                 $('<h4>', { 'class': 'card-title', 'text': `${moment.unix(entry.dt).format('DD/MM/YYYY')}` }),
                                 $('<img>', { 'src': `http://openweathermap.org/img/w/${entry.weather[0].icon}.png`, 'alt': entry.weather[0].description }),
@@ -102,10 +107,10 @@ $(document).ready(function () {
                 );
             }
         })
-        forecastEl.append(fiveDayEl);
     }
 
     async function getGeocodeFromLocation(location) {
+        log('getGeocodeFromLocation', location);
         // Geocoding API gets geographical location (name,state,country) and coordinates (lat, lon) from location
         let queryURL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${APIKey}`;
         let response = await fetch(queryURL)
@@ -119,17 +124,19 @@ $(document).ready(function () {
                 return Promise.resolve(response.json());
             })
             .then(function (data) {
-                console.log(data);
+                log('fetch data:', data);
                 return { name: data[0].name, state: data[0].state, country: data[0].country, lat: data[0].lat, lon: data[0].lon };
             })
             .catch(function (error) {
-                console(error);
+                // catch any errors
+                log(error);
             });
-        console.log(response);
+        log('response:', response);
         return response;
     }
 
     async function getCurrentWeatherForCoords(lat, lon) {
+        log('getCurrentWeatherForCoords', lat, lon);
         // current weather API
         let queryURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
         const response = await fetch(queryURL)
@@ -140,18 +147,19 @@ $(document).ready(function () {
                 throw new Error('fetch(' + queryURL + ') failed');
             })
             .then(function (data) {
-                console.log(data);
+                log('fetch data:', data);
                 return (data);
             })
             .catch(function (error) {
-                alert("name:" + error.name + " message:" + error.message);
                 // catch any errors
+                log(error);
             });
-        console.log(response);
+        log('response:', response);
         return response;
     }
 
     async function getFiveDayThreeHourForecastForCoords(lat, lon) {
+        log('getFiveDayThreeHourForecastForCoords', lat, lon);
         // current weather API
         let queryURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}&units=${apiUnit}`;
         const response = await fetch(queryURL)
@@ -162,18 +170,19 @@ $(document).ready(function () {
                 throw new Error('fetch(' + queryURL + ') failed');
             })
             .then(function (data) {
-                console.log(data);
+                log('fetch data:', data);
                 return (data);
             })
             .catch(function (error) {
-                alert("name:" + error.name + " message:" + error.message);
                 // catch any errors
+                log(error);
             });
-        console.log(response);
+        log('response:', response);
         return response;
     }
 
     function displayWeatherForGeocode(geocode) {
+        log('displayWeatherForGeocode', geocode);
         getCurrentWeatherForCoords(geocode.lat, geocode.lon)
             .then(function (weather) {
                 let loc = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
@@ -190,14 +199,11 @@ $(document).ready(function () {
         let location = searchInputEl.val().trim();
         getGeocodeFromLocation(location)
             .then(function (geocode) {
-                // let entry = { name, state, country, coords }
                 if (!searchHistory.find(geocode => (geocode.name === location))) { // only add if it isn't already in the history (match location)
                     searchHistory.push(geocode);
                     localStorage.setItem(LSKey, JSON.stringify(searchHistory));
-                    // displayHistory();
                     renderHistoryButton(geocode, searchHistory.length);
                 }
-                // getWeather(location);
                 displayWeatherForGeocode(geocode);
             });
     })
@@ -205,25 +211,21 @@ $(document).ready(function () {
     historyEl.on('click', '.list-group-item', function (event) {
         event.preventDefault();
         let entry = event.target;
-        // let location = entry.getAttribute('data-location');
-        // getWeather(location);
         let geocode = JSON.parse(entry.getAttribute('data-geocode'));
         displayWeatherForGeocode(geocode);
     })
 
     function renderHistoryButton(geocode, index) {
-        var btnEl = $('<button>', {
+        log('renderHistoryButton', geocode, index);
+        historyEl.prepend($('<button>', {
             class: 'list-group-item',
             id: `btn${index}`,
             text: `${geocode.name} (${geocode.country})`, // use city and country for uniqueness
-            // 'data-location': entry.location,
             'data-geocode': JSON.stringify(geocode)
-        });
-        historyEl.prepend(btnEl);
+        }));
     }
 
     function displayHistory() {
-        // searchHistory = JSON.parse(localStorage.getItem(LSKey));
         historyEl.empty();
         searchHistory.forEach(function (entry, index) {
             renderHistoryButton(entry, index);
@@ -233,7 +235,7 @@ $(document).ready(function () {
     function getWeather(location) {
         getGeocodeFromLocation(location)
             .then(function (geocode) {
-                console.log(geocode);
+                log(geocode);
                 displayWeatherForGeocode(geocode);
             });
     }
