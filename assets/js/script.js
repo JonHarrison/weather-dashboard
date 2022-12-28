@@ -12,6 +12,7 @@ $(document).ready(function () {
 
     const LSKey = 'WeatherDashboard.History'; // localStorage KEY
     const APIKey = '8143ac5be27f4f44b6e5d03ce390686b'; // my personal KEY
+    const FIVE_DAY_FORECAST_SELECTED_HOUR = 12; // select weather at midday for 5-day forecast
 
     const methods = { fetch: 1, async: 2 };
     const method = methods.fetch;
@@ -68,6 +69,43 @@ $(document).ready(function () {
                 ])
             ])
         ]);
+    }
+
+    function renderFiveDayWeather(data) {
+        console.log(data);
+        forecastEl.empty();
+        forecastEl.append(
+            $('<div>', { 'class': 'col-12 pt-3' }).append(
+                $('<h4>', { 'class': 'font-weight-bold', 'text': '5-Day Forecast:' })
+            )
+        );
+        
+        // var fiveDayEl = $('<div class="row container-fluid">'); // d-flex flex-row justify-content-around 
+        // forecastEl.append('<div class="row row-cols-5">'); // <div class="container-fluid"> row-cols-xs-1 row-cols-lg-6 d-flex flex-row justify-content-around
+        data.list.forEach(function(entry,index) {
+            var timestamp = moment.unix(entry.dt).format('DD/MM/YYYY HH:MM:SS');
+            //console.log(`timestamp : ${timestamp}`);
+            if (moment.unix(entry.dt).hours() === FIVE_DAY_FORECAST_SELECTED_HOUR) {
+                console.log(`using entry ${index}`);
+                const { main, main: { temp, humidity: hum }, wind: { deg: wd, speed: ws }, ...rest } = entry;
+                forecastEl.append(
+                    $('<div>', { class: 'col' }).append(
+                        $('<div>', { class: 'card forecast' }).append( // border border-dark
+                            $('<div>', { class: 'card-body' }).append([
+                                $('<h4>', { 'class': 'card-title', 'text': `${moment.unix(entry.dt).format('DD/MM/YYYY')}` }),
+                                $('<img>', { 'src': `http://openweathermap.org/img/w/${entry.weather[0].icon}.png`, 'alt': entry.weather[0].description }),
+                                // $('<img>', { 'src': `http://openweathermap.org/img/wn/${entry.weather[0].icon}@2x.png`, 'alt': entry.weather[0].description }),
+                                $('<p>', { 'class': 'card-text', 'text': `Temp: ${tempToDisplay(temp)}` }),
+                                // $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
+                                $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
+                                $('<p>', { 'class': 'card-text', 'text': `Humidity: ${hum}%` })
+                            ])
+                        )
+                    )
+                );
+            }
+        })
+        forecastEl.append(fiveDayEl);
     }
 
     async function getGeocodeFromLocation(location) {
@@ -144,6 +182,10 @@ $(document).ready(function () {
         .then(function (weather) {
             let loc = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
             renderCurrentWeather(loc,weather);
+        });
+        getFiveDayThreeHourForecastForCoords(geocode.lat, geocode.lon)
+        .then(function (weather) {
+            renderFiveDayWeather(weather);
         });
     }
 
