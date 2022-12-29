@@ -48,6 +48,8 @@ IT IS DONE
 
 ## Website image
 
+![Weather dashboard](https://user-images.githubusercontent.com/1043077/209961446-1a49c2d7-bb40-4f6d-b435-d2b3f094c310.png)
+
 ## Technologies Used
 
 - HTML
