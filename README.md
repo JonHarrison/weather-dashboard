@@ -58,7 +58,7 @@ IT IS DONE
 - Bootstrap v4.3.1
 - jQuery v3.2.1
 - Moment.js v2.29.4
-- Weather Icons by Erik Flowers v2.10.0 https://github.com/erikflowers/weather-icons
+- Weather Icons by Erik Flowers v2.0.12 https://github.com/erikflowers/weather-icons
 
 ## Links
 
