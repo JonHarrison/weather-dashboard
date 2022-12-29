@@ -125,7 +125,8 @@ $(document).ready(function () {
             })
             .then(function (data) {
                 log('fetch data:', data);
-                return { name: data[0].name, state: data[0].state, country: data[0].country, lat: data[0].lat, lon: data[0].lon };
+                const [d, ...rest] = data; // destructure data[0] as d
+                return { name: d.name, state: d.state, country: d.country, lat: d.lat, lon: d.lon };
             })
             .catch(function (error) {
                 // catch any errors
@@ -185,8 +186,8 @@ $(document).ready(function () {
         log('displayWeatherForGeocode', geocode);
         getCurrentWeatherForCoords(geocode.lat, geocode.lon)
             .then(function (weather) {
-                let loc = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
-                renderCurrentWeather(loc, weather);
+                let location = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
+                renderCurrentWeather(location, weather);
             });
         getFiveDayThreeHourForecastForCoords(geocode.lat, geocode.lon)
             .then(function (weather) {
