@@ -195,15 +195,20 @@ $(document).ready(function () {
     }
 
     searchButtonEl.on('click', function (event) {
-        event.preventDefault();
+        event.preventDefault(); // prevent default behaviour; retain input value for now
         let location = searchInputEl.val().trim();
-        getGeocodeFromLocation(location)
+        if (location) { // check location was entered
+            getGeocodeFromLocation(location)
             .then(function (geocode) {
                 if (typeof geocode === 'undefined') { // handle state that location wasn't found
                     log(`location ${location} not found`);
                 }
                 else {
-                    if (!searchHistory.find(geocode => (geocode.name === location))) { // only add if it isn't already in the history (match location)
+                    if (!searchHistory.find(function(element) {
+                         return (element.name === geocode.name
+                            && element.state === geocode.state
+                            && element.country === geocode.country);
+                        })) { // only add if it isn't already in the history (match full location - city,state,country)
                         searchHistory.push(geocode);
                         localStorage.setItem(LSKey, JSON.stringify(searchHistory));
                         renderHistoryButton(geocode, searchHistory.length);
@@ -211,6 +216,8 @@ $(document).ready(function () {
                     displayWeatherForGeocode(geocode);
                 }
             });
+        }
+        searchInputEl.val(""); // clear element now
     })
 
     historyEl.on('click', '.list-group-item', function (event) {
