@@ -25,6 +25,8 @@ $(document).ready(function () {
     // variables
     var searchHistory = JSON.parse(localStorage.getItem(LSKey)) ?? []; // null coalescing operator gives initial empty array
 
+    // conversion functions
+
     // convert API units to MPH
     function windSpeedToDisplay(speed) {
         switch (apiUnit) {
@@ -49,6 +51,8 @@ $(document).ready(function () {
                 break;
         }
     }
+
+    // render functions
 
     // render current weather card
     function renderCurrentWeather(location, data) {
@@ -108,6 +112,19 @@ $(document).ready(function () {
             }
         })
     }
+
+    // render button in history list
+    function renderHistoryButton(geocode, index) {
+        log('renderHistoryButton', geocode, index);
+        historyEl.prepend($('<button>', {
+            class: 'list-group-item',
+            id: `btn${index}`,
+            text: `${geocode.name} (${geocode.country})`, // use city and country for uniqueness
+            'data-geocode': JSON.stringify(geocode)
+        }));
+    }
+
+    // OpenWeatherMap API functions
 
     async function getGeocodeFromLocation(location) {
         log('getGeocodeFromLocation', location);
@@ -182,6 +199,8 @@ $(document).ready(function () {
         return response;
     }
 
+    // display functions
+
     function displayWeatherForGeocode(geocode) {
         log('displayWeatherForGeocode', geocode);
         getCurrentWeatherForCoords(geocode.lat, geocode.lon)
@@ -194,6 +213,15 @@ $(document).ready(function () {
                 renderFiveDayWeather(weather);
             });
     }
+
+    function displayHistory() {
+        historyEl.empty();
+        searchHistory.forEach(function (entry, index) {
+            renderHistoryButton(entry, index);
+        })
+    }
+
+    // event handlers
 
     searchButtonEl.on('click', function (event) {
         event.preventDefault(); // prevent default behaviour; retain input value for now
@@ -228,23 +256,7 @@ $(document).ready(function () {
         displayWeatherForGeocode(geocode);
     })
 
-    function renderHistoryButton(geocode, index) {
-        log('renderHistoryButton', geocode, index);
-        historyEl.prepend($('<button>', {
-            class: 'list-group-item',
-            id: `btn${index}`,
-            text: `${geocode.name} (${geocode.country})`, // use city and country for uniqueness
-            'data-geocode': JSON.stringify(geocode)
-        }));
-    }
-
-    function displayHistory() {
-        historyEl.empty();
-        searchHistory.forEach(function (entry, index) {
-            renderHistoryButton(entry, index);
-        })
-    }
-
+    // test function to display weather for a location (city)
     function getWeather(location) {
         getGeocodeFromLocation(location)
             .then(function (geocode) {
@@ -253,6 +265,7 @@ $(document).ready(function () {
             });
     }
 
+    // display search history on load
     displayHistory();
 
 });
