@@ -60,14 +60,14 @@ $(document).ready(function () {
                 $('<div>', { class: 'col' }).append([
                     $('<div>', { class: 'card rounded border border-secondary' }).append([
                         $('<div>', { class: 'card-body' }).append([
-                            $('<p>', { 'class': 'card-title h2 font-weight-bold', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
+                            $('<h2>', { 'class': 'card-title font-weight-bold', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
                                 $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
                                 // $('<img>', { 'src': `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
                             ]),
-                            $('<p>', { 'class': 'card-text h5', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)})` }),
+                            $('<h5>', { 'class': 'card-text', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)})` }),
                             // $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
-                            $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
-                            $('<p>', { 'class': 'card-text h5', 'text': `Humidity: ${hum}%` })
+                            $('<h5>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg`, 'style': 'font-size: 2rem;' })]),
+                            $('<h5>', { 'class': 'card-text', 'text': `Humidity: ${hum}%` })
                         ])
                     ])
                 ])
@@ -99,7 +99,7 @@ $(document).ready(function () {
                                 // $('<img>', { 'src': `http://openweathermap.org/img/wn/${entry.weather[0].icon}@2x.png`, 'alt': entry.weather[0].description }),
                                 $('<p>', { 'class': 'card-text', 'text': `Temp: ${tempToDisplay(temp)}` }),
                                 // $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
-                                $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg` })]),
+                                $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg`, 'style': 'font-size: 2rem;' })]),
                                 $('<p>', { 'class': 'card-text', 'text': `Humidity: ${hum}%` })
                             ])
                         )
