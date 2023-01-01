@@ -7,6 +7,7 @@ $(document).ready(function () {
     const searchFormEl = $('#search-form');
     const searchInputEl = $('#search-input');
     const searchButtonEl = $('#search-button');
+    const clearButtonEl = $('#clear-button');
     const historyEl = $('#history');
     const todayEl = $('#today');
     const forecastEl = $('#forecast');
@@ -20,10 +21,23 @@ $(document).ready(function () {
 
     // logging
     const log_level = 1;
-    var log = function() { if (log_level > 0) { console.log.apply(this,arguments); }}
-    
+    var log = function () { if (log_level > 0) { console.log.apply(this, arguments); } }
+
     // variables
-    var searchHistory = JSON.parse(localStorage.getItem(LSKey)) ?? []; // null coalescing operator gives initial empty array
+    const searchHistory = {
+        cache: JSON.parse(localStorage.getItem(LSKey)) ?? [], // null coalescing operator gives initial empty array if key doesn't exist
+        get current() {
+            return this.cache;
+        },
+        add(item) {
+            this.cache.push(item);
+            localStorage.setItem(LSKey, JSON.stringify(this.cache));
+        },
+        clear() {
+            this.cache = [];
+            localStorage.removeItem(LSKey);
+        }
+    };
 
     // conversion functions
 
@@ -205,7 +219,7 @@ $(document).ready(function () {
         log('displayWeatherForGeocode', geocode);
         getCurrentWeatherForCoords(geocode.lat, geocode.lon)
             .then(function (weather) {
-                let location = `${geocode.name}` + (geocode.state !== undefined ? `,${geocode.state}`:'') + ` (${geocode.country})`; // format location string
+                let location = `${geocode.name}` + (geocode.state !== undefined ? `,${geocode.state}` : '') + ` (${geocode.country})`; // format location string
                 renderCurrentWeather(location, weather);
             });
         getFiveDayThreeHourForecastForCoords(geocode.lat, geocode.lon)
@@ -216,7 +230,7 @@ $(document).ready(function () {
 
     function displayHistory() {
         historyEl.empty();
-        searchHistory.forEach(function (entry, index) {
+        searchHistory.current.forEach(function (entry, index) {
             renderHistoryButton(entry, index);
         })
     }
@@ -228,25 +242,29 @@ $(document).ready(function () {
         let location = searchInputEl.val().trim();
         if (location) { // check location was entered
             getGeocodeFromLocation(location)
-            .then(function (geocode) {
-                if (typeof geocode === 'undefined') { // handle state that location wasn't found
-                    log(`location ${location} not found`);
-                }
-                else {
-                    if (!searchHistory.find(function(element) {
-                         return (element.name === geocode.name
-                            && element.state === geocode.state
-                            && element.country === geocode.country);
-                        })) { // only add if it isn't already in the history (match full location - city,state,country)
-                        searchHistory.push(geocode);
-                        localStorage.setItem(LSKey, JSON.stringify(searchHistory));
-                        renderHistoryButton(geocode, searchHistory.length);
+                .then(function (geocode) {
+                    if (typeof geocode === 'undefined') { // handle state that location wasn't found
+                        log(`location ${location} not found`);
                     }
-                    displayWeatherForGeocode(geocode);
-                }
-            });
+                    else {
+                        if (!searchHistory.current.find(function (element) {
+                            return (element.name === geocode.name
+                                && element.state === geocode.state
+                                && element.country === geocode.country);
+                        })) { // only add if it isn't already in the history (match full location - city,state,country)
+                            searchHistory.add(geocode);
+                            renderHistoryButton(geocode, searchHistory.current.length);
+                        }
+                        displayWeatherForGeocode(geocode);
+                    }
+                });
         }
         searchInputEl.val(""); // clear element now
+    })
+
+    clearButtonEl.on('click', function (event) {
+        searchHistory.clear();
+        displayHistory();
     })
 
     historyEl.on('click', '.list-group-item', function (event) {
