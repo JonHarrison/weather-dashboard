@@ -205,7 +205,7 @@ $(document).ready(function () {
         log('displayWeatherForGeocode', geocode);
         getCurrentWeatherForCoords(geocode.lat, geocode.lon)
             .then(function (weather) {
-                let location = `${geocode.name},${geocode.state} (${geocode.country})`; // format location string
+                let location = `${geocode.name}` + (geocode.state !== undefined ? `,${geocode.state}`:'') + ` (${geocode.country})`; // format location string
                 renderCurrentWeather(location, weather);
             });
         getFiveDayThreeHourForecastForCoords(geocode.lat, geocode.lon)
