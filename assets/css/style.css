@@ -1,0 +1,58 @@
+:root {
+    --heliotrope: rgba(232,102,236,1);
+    --headerBackgroundGradientStart: rgb(32,10,76);
+    --headerBackgroundGradientEnd: rgb(52,98,187);
+    --searchButtonBackground: rgb(80,152,230);
+    --hrBorder: rgba(34,34,34,0.1);
+    --historyButtonBackground: rgb(174,174,174);
+    --forecastCardBackground: rgb(45,62,80);
+    --forecastCardForeground: white;
+    --forecastCardHoverBoxShadow: #aaa;
+    --forecastCardHoverBackground: rgb(85,116,151);
+}
+
+/* gradient for header */
+.weather-header {
+    background-color: #2a2a72;
+    background-image: linear-gradient(315deg, var(--headerBackgroundGradientStart) 0%, var(--headerBackgroundGradientEnd) 74%);
+}
+
+/* horizontal rule - divider between weather search and location history list */
+.weather-hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid var(--hrBorder);
+}
+
+.search-button {
+    background-color: var(--searchButtonBackground);
+}
+
+/* location history list */
+.list-group-item {
+    background-color: var(--historyButtonBackground);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.forecast {
+    background-color: var(--forecastCardBackground);
+    color: var(--forecastCardForeground);
+}
+
+.forecast:hover {
+    transform: rotate(2deg);
+    box-shadow: 10px 10px 5px var(--forecastCardHoverBoxShadow);
+    background-color: var(--forecastCardHoverBackground);
+}
+
+.card {
+    margin-bottom: 20px; /* add a margin when stacking cards vertically */
+}
+
+.card-body {
+    padding-left: 10px; /* add padding between text and left hand side of card */
+}
