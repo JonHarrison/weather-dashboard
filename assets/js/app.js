@@ -88,8 +88,8 @@ $(document).ready(function () {
                     $('<div>', { class: 'card rounded border border-secondary' }).append([
                         $('<div>', { class: 'card-body' }).append([
                             $('<h2>', { 'class': 'card-title font-weight-bold', 'text': `${location} (${moment().format('DD/MM/YYYY')})` }).append([
-                                $('<img>', { 'src': `http://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
-                                // $('<img>', { 'src': `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
+                                $('<img>', { 'src': `https://openweathermap.org/img/w/${data.weather[0].icon}.png`, 'alt': data.weather[0].description }),
+                                // $('<img>', { 'src': `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`, 'alt': data.weather[0].description })
                             ]),
                             $('<h5>', { 'class': 'card-text', 'text': `Temp: ${tempToDisplay(temp)} (min: ${tempToDisplay(tmin)} max: ${tempToDisplay(tmax)})` }),
                             // $('<p>', { 'class': 'card-text h5', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
@@ -122,8 +122,8 @@ $(document).ready(function () {
                         $('<div>', { class: 'card forecast' }).append(
                             $('<div>', { class: 'card-body' }).append([
                                 $('<h4>', { 'class': 'card-title', 'text': `${moment.unix(entry.dt).format('DD/MM/YYYY')}` }),
-                                $('<img>', { 'src': `http://openweathermap.org/img/w/${entry.weather[0].icon}.png`, 'alt': entry.weather[0].description }),
-                                // $('<img>', { 'src': `http://openweathermap.org/img/wn/${entry.weather[0].icon}@2x.png`, 'alt': entry.weather[0].description }),
+                                $('<img>', { 'src': `https://openweathermap.org/img/w/${entry.weather[0].icon}.png`, 'alt': entry.weather[0].description }),
+                                // $('<img>', { 'src': `https://openweathermap.org/img/wn/${entry.weather[0].icon}@2x.png`, 'alt': entry.weather[0].description }),
                                 $('<p>', { 'class': 'card-text', 'text': `Temp: ${tempToDisplay(temp)}` }),
                                 // $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} (direction ${wd} deg)` }),
                                 $('<p>', { 'class': 'card-text', 'text': `Wind: ${windSpeedToDisplay(ws)} ` }).append([$('<i>', { 'class': `wi wi-wind towards-${wd}-deg`, 'style': 'font-size: 2rem;' })]),
@@ -152,7 +152,7 @@ $(document).ready(function () {
     async function getGeocodeFromLocation(location) {
         log('getGeocodeFromLocation', location);
         // Geocoding API gets geographical location (name,state,country) and coordinates (lat, lon) from location
-        let queryURL = `http://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${APIKey}`;
+        let queryURL = `https://api.openweathermap.org/geo/1.0/direct?q=${location}&appid=${APIKey}`;
         let response = await fetch(queryURL)
             .then(function status(response) {
                 if (!response.ok) {
