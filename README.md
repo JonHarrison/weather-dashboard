@@ -45,6 +45,7 @@ IT IS DONE
 
 * Use of async functions to return object from fetch
 * Fetch query error handling
+* GitHub doesn't like deploying page icons with _ in the filename, - is okay though
 
 ## Website image
 
