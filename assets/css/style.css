@@ -49,6 +49,10 @@
     background-color: var(--forecastCardHoverBackground);
 }
 
+.card {
+    margin-bottom: 20px; /* add a margin when stacking cards vertically */
+}
+
 .card-body {
-    padding-left: 10px;
+    padding-left: 10px; /* add padding between text and left hand side of card */
 }
