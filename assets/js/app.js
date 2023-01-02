@@ -36,6 +36,15 @@ $(document).ready(function () {
         clear() {
             this.cache = [];
             localStorage.removeItem(LSKey);
+        },
+        contains(geocode) {
+            if (this.cache.find(element =>
+                element.name === geocode.name
+                && element.state === geocode.state
+                && element.country === geocode.country)) {
+                    return true;
+                }
+            return false;
         }
     };
 
@@ -247,11 +256,7 @@ $(document).ready(function () {
                         log(`location ${location} not found`);
                     }
                     else {
-                        if (!searchHistory.current.find(function (element) {
-                            return (element.name === geocode.name
-                                && element.state === geocode.state
-                                && element.country === geocode.country);
-                        })) { // only add if it isn't already in the history (match full location - city,state,country)
+                        if (!searchHistory.contains(geocode)) { // only add if it isn't already in the history (match full location - city,state,country)
                             searchHistory.add(geocode);
                             renderHistoryButton(geocode, searchHistory.current.length);
                         }
